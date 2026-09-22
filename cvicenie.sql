@@ -31,3 +31,5 @@ SELECT * FROM customers;
 SELECT * FROM products;
 
 SELECT * FROM orders;
+
+SELECT orders.order_id, customers.customer_name, orders.sales FROM orders INNER JOIN customers ON customers.customer_id = orders.customer_id WHERE orders.sales > 500;
