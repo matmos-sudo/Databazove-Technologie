@@ -33,3 +33,37 @@ SELECT * FROM products;
 SELECT * FROM orders;
 
 SELECT orders.order_id, customers.customer_name, orders.sales FROM orders INNER JOIN customers ON customers.customer_id = orders.customer_id WHERE orders.sales > 500;
+
+SELECT orders.order_id, customers.customer_name, products.category, orders.sales FROM orders INNER JOIN customers ON customers.customer_id = orders.customer_id INNER JOIN products ON products.product_id = orders.product_id;
+
+SELECT customers.region, SUM(orders.sales) FROM customers INNER JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customers.region;
+
+SELECT products.product_name, SUM(orders.sales) AS hodnota FROM products LEFT JOIN orders ON orders.product_id = products.product_id GROUP BY products.product_name;
+
+SELECT customers.customer_name, orders.order_id, orders.sales FROM customers FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;
+
+SELECT customers.region, SUM(orders.sales) FROM customers INNER JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customers.region;
+
+SELECT customers.customer_name, COUNT(orders.customer_id) AS pocet FROM customers LEFT JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customer.customer_name;
+
+SELECT products.category, AVG(orders.discount) FROM products INNER JOIN orders ON orders.product_id = products.product_id GROUP BY products.category;
+
+SELECT customers.customer_name, SUM(orders.sales) AS celkova_hodnota FROM customers INNER JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customers.customer_id, customers.customer_name HAVING SUM(orders.sales) > 2000;
+
+SELECT customers.region, SUM(orders.sales) AS predaj, AVG(orders.discount) AS zlava, COUNT(orders.customer_id) AS pocet FROM customers INNER JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customers.region;
+
+SELECT customers.region, COUNT(*) FILTER (WHERE orders.sales > 1000) AS high_value,COUNT(*) FILTER (WHERE orders.sales <= 1000) AS low_value FROM customers INNER JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customers.region;
+
+SELECT 
+    customers.customer_name,
+    SUM(orders.sales) AS celkovy_predaj,
+    AVG(orders.discount) AS priemerna_zlava,
+    COUNT(orders.order_id) AS pocet_objednavok,
+    CASE 
+        WHEN SUM(orders.sales) > 2500 THEN 'VIP'
+        ELSE 'REGULAR'
+    END AS typ_zakaznika
+FROM customers
+INNER JOIN orders ON orders.customer_id = customers.customer_id
+GROUP BY customers.customer_id, customers.customer_name
+ORDER BY celkovy_predaj DESC;
