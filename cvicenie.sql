@@ -67,3 +67,24 @@ FROM customers
 INNER JOIN orders ON orders.customer_id = customers.customer_id
 GROUP BY customers.customer_id, customers.customer_name
 ORDER BY celkovy_predaj DESC;
+
+/*----------------------1c------------------------*/
+/*1.*/
+CREATE VIEW high_value_customers AS SELECT customers.customer_id, customers.customer_name , SUM(orders.sales) AS total_sales FROM customers INNER JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customers.customer_id HAVING SUM(orders.sales) > 2000;
+SELECT * FROM high_value_customers;
+/*2.*/
+CREATE VIEW regional_monthly_sales AS SELECT customers.region, DATE_TRUNC('month', orders.order_date) AS month , SUM(orders.sales) AS monthly_sales FROM customers INNER JOIN orders ON orders.customer_id = customers.customer_id GROUP BY customers.region,month;
+SELECT * FROM regional_monthly_sales ORDER BY region;
+/*3.*/
+CREATE VIEW analyst_orders AS SELECT order_id, customer_id, product_id, sales, quantity, discount FROM orders;
+SELECT * FROM analyst_orders;
+/*4.*/
+CREATE INDEX idx_orders_customer_id ON orders(customer_id);
+SELECT * FROM orders WHERE customer_id='C001';
+
+/*5.*/
+CREATE INDEX idx_orders_order_date ON orders(order_date);
+SELECT DATE_TRUNC('month',order_date) AS month, SUM(sales) FROM orders GROUP BY month ORDER BY month ASC;
+/*6*/
+CREATE INDEX idx_orders_region_category ON orders(customer_id, order_date);
+SELECT * FROM orders INNER JOIN customers ON customers.customer_id = orders.customer_id WHERE region = 'West' AND order_date > '2024-01-01';
